@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate PWA Icons</title>
+    <style>
+        canvas {
+            border: 1px solid #000;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Right-click each canvas and select "Save image as..." to save the icons</h2>
+    <div>
+        <h3>192x192 Icon</h3>
+        <canvas id="icon192" width="192" height="192"></canvas>
+    </div>
+    <div>
+        <h3>512x512 Icon</h3>
+        <canvas id="icon512" width="512" height="512"></canvas>
+    </div>
+
+    <script>
+        function drawIcon(canvasId, size) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            
+            // Background
+            ctx.fillStyle = '#4CAF50';
+            ctx.fillRect(0, 0, size, size);
+            
+            // Draw a simple "H" letter
+            ctx.fillStyle = 'white';
+            const padding = size * 0.2;
+            const strokeWidth = size * 0.15;
+            
+            // Vertical lines
+            ctx.fillRect(padding, padding, strokeWidth, size - (padding * 2));
+            ctx.fillRect(size - padding - strokeWidth, padding, strokeWidth, size - (padding * 2));
+            
+            // Horizontal line
+            ctx.fillRect(padding, size/2 - strokeWidth/2, size - (padding * 2), strokeWidth);
+        }
+
+        // Draw both icons
+        drawIcon('icon192', 192);
+        drawIcon('icon512', 512);
+    </script>
+</body>
+</html> 
