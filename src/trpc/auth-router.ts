@@ -77,4 +77,12 @@ export const authRouter = router({
         throw new TRPCError({ code: 'UNAUTHORIZED' })
       }
     }),
+
+  logout: publicProcedure
+    .mutation(async ({ ctx }) => {
+      const { res } = ctx;
+      // Clear the auth cookie by setting it to empty and expiring it
+      res.setHeader('Set-Cookie', 'payload-token=; Path=/; HttpOnly; Max-Age=0; SameSite=Lax');
+      return { success: true };
+    }),
 })

@@ -46,7 +46,7 @@ const UserAccountNav = ({ user }: { user: User }) => {
         </DropdownMenuItem>
 
         <DropdownMenuItem
-          onClick={signOut}
+          onClick={() => signOut()}
           className='cursor-pointer'>
           Log out
         </DropdownMenuItem>
