@@ -63,8 +63,10 @@ const Page = () => {
   const onSubmit = ({
     email,
     password,
+    name,
+    mobile,
   }: TAuthCredentialsValidator) => {
-    mutate({ email, password })
+    mutate({ email, password, name, mobile })
   }
 
   return (
@@ -91,6 +93,38 @@ const Page = () => {
           <div className='grid gap-6'>
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className='grid gap-2'>
+                <div className='grid gap-1 py-2'>
+                  <Label htmlFor='name' className='text-blue-600'>Full Name</Label>
+                  <Input
+                    {...register('name')}
+                    className={cn({
+                      'focus-visible:ring-blue-500 border-blue-200': !errors.name,
+                      'focus-visible:ring-red-500': errors.name,
+                    })}
+                    placeholder='Your Name'
+                  />
+                  {errors?.name && (
+                    <p className='text-sm text-red-500'>
+                      {errors.name.message}
+                    </p>
+                  )}
+                </div>
+                <div className='grid gap-1 py-2'>
+                  <Label htmlFor='mobile' className='text-blue-600'>Mobile Number</Label>
+                  <Input
+                    {...register('mobile')}
+                    className={cn({
+                      'focus-visible:ring-blue-500 border-blue-200': !errors.mobile,
+                      'focus-visible:ring-red-500': errors.mobile,
+                    })}
+                    placeholder='Mobile Number'
+                  />
+                  {errors?.mobile && (
+                    <p className='text-sm text-red-500'>
+                      {errors.mobile.message}
+                    </p>
+                  )}
+                </div>
                 <div className='grid gap-1 py-2'>
                   <Label htmlFor='email' className='text-blue-600'>Email</Label>
                   <Input

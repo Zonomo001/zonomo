@@ -57,6 +57,10 @@ export interface User {
   loginAttempts?: number | null;
   lockUntil?: string | null;
   password: string | null;
+  name?: string | null;
+  mobile?: string | null;
+  address?: string | null;
+  pincode?: string | null;
 }
 export interface Product {
   id: string;

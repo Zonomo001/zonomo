@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils'
 import { TRPCError } from '@trpc/server'
 import TimeFrameSelector, { TIME_FRAMES, TimeFrame } from './TimeFrameSelector'
 import { useCart } from '@/hooks/use-cart'
+import { useUserProfile } from '@/hooks/use-auth'
 
 interface BookServiceButtonProps {
   product: Product;
@@ -36,6 +37,7 @@ const BookServiceButton = ({
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
 
   const { addItem } = useCart()
+  const { profile: userProfile } = useUserProfile()
 
   const { mutate: createBooking, isLoading: isCreatingBooking } = trpc.booking.createBooking.useMutation({
     onSuccess: () => {
@@ -334,6 +336,16 @@ const BookServiceButton = ({
               <p className='text-sm text-muted-foreground'>
                 <strong>Email:</strong> {user?.email}
               </p>
+              {userProfile && (
+                <>
+                  <p className='text-sm text-muted-foreground'>
+                    <strong>Address:</strong> {userProfile.address}
+                  </p>
+                  <p className='text-sm text-muted-foreground'>
+                    <strong>Pincode:</strong> {userProfile.pincode}
+                  </p>
+                </>
+              )}
             </div>
 
             <div className='flex gap-2'>
