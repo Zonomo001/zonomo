@@ -68,8 +68,8 @@ export const paymentRouter = router({
       // Create a new price for the transaction fee
       try {
         const feePrice = await stripe.prices.create({
-          currency: 'usd',
-          unit_amount: 100, // $1.00
+          currency: 'inr',
+          unit_amount: 100, // ₹1.00
           product_data: {
             name: 'Transaction Fee',
           },

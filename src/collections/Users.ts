@@ -27,7 +27,13 @@ export const Users: CollectionConfig = {
   access: {
     read: adminsAndUser,
     create: () => true,
-    update: ({ req }) => req.user.role === 'admin',
+    update: ({ req }) => {
+      // Allow users to update their own profile
+      if (req.user && req.user.id) {
+        return { id: { equals: req.user.id } }
+      }
+      return false
+    },
     delete: ({ req }) => req.user.role === 'admin',
   },
   admin: {
@@ -35,6 +41,30 @@ export const Users: CollectionConfig = {
     defaultColumns: ['id'],
   },
   fields: [
+    {
+      name: 'name',
+      label: 'Full Name',
+      type: 'text',
+      required: false,
+    },
+    {
+      name: 'mobile',
+      label: 'Mobile Number',
+      type: 'text',
+      required: false,
+    },
+    {
+      name: 'address',
+      label: 'Address',
+      type: 'text',
+      required: false,
+    },
+    {
+      name: 'pincode',
+      label: 'Pincode',
+      type: 'text',
+      required: false,
+    },
     {
       name: 'products',
       label: 'Services',

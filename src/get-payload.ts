@@ -34,6 +34,7 @@ interface Args {
 export const getPayloadClient = async ({
   initOptions,
 }: Args = {}): Promise<Payload> => {
+  console.log('PAYLOAD_SECRET:', process.env.PAYLOAD_SECRET); // Debug line
   if (!process.env.PAYLOAD_SECRET) {
     throw new Error('PAYLOAD_SECRET is missing')
   }
@@ -47,7 +48,7 @@ export const getPayloadClient = async ({
       email: {
         transport: transporter,
         //'onboarding@resend.dev'
-        fromAddress: 'onboarding@resend.dev',
+        fromAddress: 'noreply@zonomo.in',
         fromName: 'Zonomo',
       },
       secret: process.env.PAYLOAD_SECRET,

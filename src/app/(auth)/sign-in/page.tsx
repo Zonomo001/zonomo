@@ -16,11 +16,14 @@ import { useForm } from 'react-hook-form'
 import {
   AuthCredentialsValidator,
   TAuthCredentialsValidator,
+  SignInValidator,
+  TSignInValidator,
 } from '@/lib/validators/account-credentials-validator'
 import { trpc } from '@/trpc/client'
 import { toast } from 'sonner'
 import { ZodError } from 'zod'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { useUserStore } from '@/hooks/use-auth'
 
 const Page = () => {
   const searchParams = useSearchParams()
@@ -31,15 +34,15 @@ const Page = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<TAuthCredentialsValidator>({
-    resolver: zodResolver(AuthCredentialsValidator),
+  } = useForm<TSignInValidator>({
+    resolver: zodResolver(SignInValidator),
   })
 
   const { mutate: signIn, isLoading } =
     trpc.auth.signIn.useMutation({
       onSuccess: async () => {
         toast.success('Signed in successfully')
-
+        useUserStore.getState().refetch(); // <-- Update global user/profile state
         router.refresh()
 
         if (origin) {
@@ -59,7 +62,7 @@ const Page = () => {
   const onSubmit = ({
     email,
     password,
-  }: TAuthCredentialsValidator) => {
+  }: TSignInValidator) => {
     signIn({ email, password })
   }
 

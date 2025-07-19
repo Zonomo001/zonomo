@@ -1,4 +1,4 @@
-import { AuthCredentialsValidator } from '../lib/validators/account-credentials-validator'
+import { AuthCredentialsValidator, SignInValidator } from '../lib/validators/account-credentials-validator'
 import { publicProcedure, router } from './trpc'
 import { getPayloadClient } from '../get-payload'
 import { TRPCError } from '@trpc/server'
@@ -8,7 +8,7 @@ export const authRouter = router({
   createPayloadUser: publicProcedure
     .input(AuthCredentialsValidator)
     .mutation(async ({ input }) => {
-      const { email, password } = input
+      const { email, password, name, mobile } = input
       const payload = await getPayloadClient()
 
       // check if user already exists
@@ -30,6 +30,8 @@ export const authRouter = router({
           email,
           password,
           role: 'user',
+          name,
+          mobile,
         },
       })
 
@@ -55,7 +57,7 @@ export const authRouter = router({
     }),
 
   signIn: publicProcedure
-    .input(AuthCredentialsValidator)
+    .input(SignInValidator)
     .mutation(async ({ input, ctx }) => {
       const { email, password } = input
       const { res } = ctx
@@ -76,5 +78,13 @@ export const authRouter = router({
       } catch (err) {
         throw new TRPCError({ code: 'UNAUTHORIZED' })
       }
+    }),
+
+  logout: publicProcedure
+    .mutation(async ({ ctx }) => {
+      const { res } = ctx;
+      // Clear the auth cookie by setting it to empty and expiring it
+      res.setHeader('Set-Cookie', 'payload-token=; Path=/; HttpOnly; Max-Age=0; SameSite=Lax');
+      return { success: true };
     }),
 })
