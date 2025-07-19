@@ -51,8 +51,9 @@ const Navbar = () => {
                 <Icons.logo className='h-10 w-30' />
               </Link>
 
-              {/* Right: Auth/Avatar */}
+              {/* Right: Cart and Auth/Avatar */}
               <div className='flex items-center space-x-4'>
+                <Cart />
                 {loading ? (
                   <span className='text-gray-400'>Loading...</span>
                 ) : user ? (

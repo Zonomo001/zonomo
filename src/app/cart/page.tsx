@@ -41,7 +41,7 @@ const Page = () => {
     0
   )
 
-  const fee = 1
+  const fee = 100 // ₹1.00 in paise
 
   return (
     <div className='bg-white'>

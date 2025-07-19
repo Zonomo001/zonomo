@@ -100,7 +100,7 @@ export const Products: CollectionConfig = {
             await stripe.products.create({
               name: data.name,
               default_price_data: {
-                currency: 'USD',
+                currency: 'inr',
                 unit_amount: Math.round(data.price * 100),
               },
             })
@@ -157,9 +157,9 @@ export const Products: CollectionConfig = {
     },
     {
       name: 'price',
-      label: 'Price per hour (USD)',
+      label: 'Price per hour (INR)',
       min: 0,
-      max: 1000,
+      max: 100000,
       type: 'number',
       required: true,
     },
