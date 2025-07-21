@@ -16,6 +16,8 @@ import { useForm } from 'react-hook-form'
 import {
   AuthCredentialsValidator,
   TAuthCredentialsValidator,
+  SignInValidator,
+  TSignInValidator,
 } from '@/lib/validators/account-credentials-validator'
 import { trpc } from '@/trpc/client'
 import { toast } from 'sonner'
@@ -29,8 +31,8 @@ const Page = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<TAuthCredentialsValidator>({
-    resolver: zodResolver(AuthCredentialsValidator),
+  } = useForm<TSignInValidator>({
+    resolver: zodResolver(SignInValidator),
   })
 
   const { mutate: signIn, isLoading } =
@@ -50,7 +52,7 @@ const Page = () => {
   const onSubmit = ({
     email,
     password,
-  }: TAuthCredentialsValidator) => {
+  }: TSignInValidator) => {
     signIn({ email, password })
   }
 
