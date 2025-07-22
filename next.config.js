@@ -10,6 +10,10 @@ const nextConfig = {
 				protocol: "https",
 				hostname: "digitalhippo-production.up.railway.app",
 			},
+			{
+				protocol: "https",
+				hostname: "zonomo-test.onrender.com",
+			},
 		],
 	},
 	typescript: {

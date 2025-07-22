@@ -29,7 +29,7 @@ const syncUser: AfterChangeHook<Product> = async ({
     const { products } = fullUser
 
     const allIDs = [
-      ...(products?.map((product) =>
+      ...((Array.isArray(products) ? products : []).map((product) =>
         typeof product === 'object' ? product.id : product
       ) || []),
     ]

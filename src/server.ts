@@ -15,6 +15,9 @@ import { parse } from 'url'
 const app = express()
 const PORT = Number(process.env.PORT) || 3000
 
+// Serve uploaded product files statically
+app.use('/product_files', express.static(path.join(__dirname, '../product_files')))
+
 const createContext = ({
   req,
   res,

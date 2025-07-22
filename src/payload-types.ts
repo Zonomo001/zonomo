@@ -189,13 +189,3 @@ export interface PayloadMigration {
   updatedAt: string;
   createdAt: string;
 }
-
-// import type { Config } from 'payload/config'
-
-// declare module 'payload/generated-types' {
-//   export interface GeneratedTypes extends Config {}
-// }
-
- declare module 'payload' {
-  export interface GeneratedTypes extends Config {}
- }
