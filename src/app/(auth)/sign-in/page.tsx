@@ -1,34 +1,31 @@
-'use client'
+'use client';
 
-import { Icons } from '@/components/Icons'
-import {
-  Button,
-  buttonVariants,
-} from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { cn } from '@/lib/utils'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowRight, Loader2 } from 'lucide-react'
-import Link from 'next/link'
-import { useForm } from 'react-hook-form'
-
+import { Icons } from '@/components/Icons';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { ArrowRight, Loader2 } from 'lucide-react';
+import Link from 'next/link';
+import { useForm } from 'react-hook-form';
 import {
   AuthCredentialsValidator,
   TAuthCredentialsValidator,
   SignInValidator,
   TSignInValidator,
-} from '@/lib/validators/account-credentials-validator'
-import { trpc } from '@/trpc/client'
-import { toast } from 'sonner'
-import { ZodError } from 'zod'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useUserStore } from '@/hooks/use-auth'
+} from '@/lib/validators/account-credentials-validator';
+import { trpc } from '@/trpc/client';
+import { toast } from 'sonner';
+import { ZodError } from 'zod';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useUserStore } from '@/hooks/use-auth';
+import { useEffect } from 'react';
 
 const Page = () => {
-  const searchParams = useSearchParams()
-  const router = useRouter()
-  const origin = searchParams.get('origin')
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const origin = searchParams.get('origin');
 
   const {
     register,
@@ -36,35 +33,38 @@ const Page = () => {
     formState: { errors },
   } = useForm<TSignInValidator>({
     resolver: zodResolver(SignInValidator),
-  })
+  });
 
-  const { mutate: signIn, isLoading } =
-    trpc.auth.signIn.useMutation({
-      onSuccess: async () => {
-        toast.success('Signed in successfully')
-        useUserStore.getState().refetch(); // <-- Update global user/profile state
-        router.refresh()
+  const { mutate: signIn, isLoading } = trpc.auth.signIn.useMutation({
+    onSuccess: async () => {
+      toast.success('Signed in successfully');
+      useUserStore.getState().refetch();
+      router.refresh();
 
-        if (origin) {
-          router.push(`/${origin}`)
-          return
-        }
+      if (origin) {
+        router.push(`/${origin}`);
+        return;
+      }
+      router.push('/');
+    },
+    onError: (err) => {
+      if (err.data?.code === 'UNAUTHORIZED') {
+        toast.error('Invalid email or password.');
+      }
+    },
+  });
 
-        router.push('/')
-      },
-      onError: (err) => {
-        if (err.data?.code === 'UNAUTHORIZED') {
-          toast.error('Invalid email or password.')
-        }
-      },
-    })
+  const onSubmit = ({ email, password }: TSignInValidator) => {
+    signIn({ email, password });
+  };
 
-  const onSubmit = ({
-    email,
-    password,
-  }: TSignInValidator) => {
-    signIn({ email, password })
-  }
+  useEffect(() => {
+    (async () => {
+      await fetch('/api/user', {
+        next: { revalidate: false },
+      });
+    })();
+  }, []);
 
   return (
     <>
@@ -75,7 +75,6 @@ const Page = () => {
             <h1 className='text-2xl font-semibold tracking-tight text-blue-600'>
               Sign in to your account
             </h1>
-
             <Link
               className={buttonVariants({
                 variant: 'link',
@@ -95,16 +94,13 @@ const Page = () => {
                   <Input
                     {...register('email')}
                     className={cn({
-                      'focus-visible:ring-blue-500 border-blue-200':
-                        !errors.email,
+                      'focus-visible:ring-blue-500 border-blue-200': !errors.email,
                       'focus-visible:ring-red-500': errors.email,
                     })}
                     placeholder='you@example.com'
                   />
                   {errors?.email && (
-                    <p className='text-sm text-red-500'>
-                      {errors.email.message}
-                    </p>
+                    <p className='text-sm text-red-500'>{errors.email.message}</p>
                   )}
                 </div>
 
@@ -114,22 +110,17 @@ const Page = () => {
                     {...register('password')}
                     type='password'
                     className={cn({
-                      'focus-visible:ring-blue-500 border-blue-200':
-                        !errors.password,
+                      'focus-visible:ring-blue-500 border-blue-200': !errors.password,
                       'focus-visible:ring-red-500': errors.password,
                     })}
                     placeholder='Password'
                   />
                   {errors?.password && (
-                    <p className='text-sm text-red-500'>
-                      {errors.password.message}
-                    </p>
+                    <p className='text-sm text-red-500'>{errors.password.message}</p>
                   )}
                 </div>
 
-                <Button 
-                  disabled={isLoading}
-                  className='bg-blue-600 hover:bg-blue-700 text-white'>
+                <Button disabled={isLoading} className='bg-blue-600 hover:bg-blue-700 text-white'>
                   {isLoading && (
                     <Loader2 className='mr-2 h-4 w-4 animate-spin' />
                   )}
@@ -149,7 +140,7 @@ const Page = () => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default Page
+export default Page;

@@ -2,37 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Theme Variables */
+.light {
+  --background: #ffffff;
+  --text-primary: #000000;
+  --text-secondary: #666666;
+  --border: #e5e7eb;
+  --card-bg: #ffffff;
+}
+
+.dark {
+  --background: #1a1a1a;
+  --text-primary: #ffffff;
+  --text-secondary: #9ca3af;
+  --border: #374151;
+  --card-bg: rgba(255, 255, 255, 0.05);
+}
+
 @layer base {
   :root {
-    --background: 0 0% 100%; /* White */
-    --foreground: 0 0% 0%; /* Black */
-
-    --card: 0 0% 100%; /* White */
-    --card-foreground: 0 0% 0%; /* Black */
-
-    --popover: 0 0% 100%; /* White */
-    --popover-foreground: 0 0% 0%; /* Black */
-
-    --primary: 0 0% 0%; /* Black */
-    --primary-foreground: 0 0% 100%; /* White */
-
-    --secondary: 0 0% 100%; /* White */
-    --secondary-foreground: 0 0% 0%; /* Black */
-
-    --muted: 0 0% 100%; /* White */
-    --muted-foreground: 0 0% 0%; /* Black */
-
-    --accent: 0 0% 100%; /* White */
-    --accent-foreground: 0 0% 0%; /* Black */
-
-    --destructive: 0 0% 0%; /* Black */
-    --destructive-foreground: 0 0% 100%; /* White */
-
-    --border: 0 0% 0%; /* Black */
-    --input: 0 0% 0%; /* Black */
-    --ring: 0 0% 0%; /* Black */
-
-    --radius: 0.5rem;
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.75rem;
   }
 
   .dark {
@@ -72,22 +80,150 @@
   }
   body {
     @apply bg-background text-foreground;
-    /* Removed hardcoded background to rely on Tailwind variables */
     min-height: 100vh;
+    background: #1a1a1a;
   }
 }
 
+/* Font families */
+@import url("https://fonts.googleapis.com/css2?family=Inder:wght@400&family=Inter:wght@400;500;600;700&display=swap");
+
+/* Zonomo specific styles */
+.zonomo-gradient {
+  background: linear-gradient(
+    135deg,
+    #220d2b 10%,
+    #2d1b69 20%,
+    #1a237e 40%,
+    #6a4c93 60%,
+    #8b4c93 80%,
+    #aa0061 100%
+  );
+}
+
+.promo-gradient {
+  background: linear-gradient(
+    to bottom right,
+    #502c8a 0%,
+    rgba(80, 44, 138, 0.8) 30%,
+    rgba(80, 44, 138, 0.6) 60%,
+    rgba(80, 44, 138, 0.4) 80%,
+    rgba(80, 44, 138, 0.2) 100%
+  );
+}
+
+.refer-gradient {
+  background: linear-gradient(
+    to bottom right,
+    #2196f3 0%,
+    rgba(33, 150, 243, 0.8) 30%,
+    rgba(33, 150, 243, 0.6) 60%,
+    rgba(33, 150, 243, 0.4) 80%,
+    rgba(33, 150, 243, 0.2) 100%
+  );
+}
+
+.zonomo-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.service-card {
+  background: #000000;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  background: #000000;
+}
+
+.nav-tab {
+  transition: all 0.3s ease;
+}
+
+.nav-tab.active {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.search-bar {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.purple-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.purple-button:hover {
+  background: linear-gradient(135deg, #5a6dd8 0%, #6a4190 100%);
+  transform: translateY(-2px);
+}
+
+.review-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.top-pick-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.top-pick-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
 .swiper-pagination-bullet {
-  background: #000000 !important; /* Black */
+  background: #ffffff !important;
   opacity: 0.5 !important;
-  width: 7px !important;
-  height: 7px !important;
+  width: 8px !important;
+  height: 8px !important;
   scale: 0.9 !important;
 }
 
 .swiper-pagination-bullet-active {
-  background: #000000 !important; /* Black */
+  background: #667eea !important;
   opacity: 1 !important;
-  color: #fff; /* Keeping for text, if any, but probably not needed for a bullet */
-  scale: 1 !important ;
+  scale: 1.2 !important;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #5a6dd8 0%, #6a4190 100%);
+}
+@media (prefers-color-scheme: dark) {
+  .swiper-pagination-bullet {
+    background: #ffffff !important;
+    opacity: 0.5 !important;
+  }
+  .swiper-pagination-bullet-active {
+    background: #ffffff !important;
+    opacity: 1 !important;
+  }
 }

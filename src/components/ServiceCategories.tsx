@@ -9,7 +9,7 @@ export default function ServiceCategories() {
     <div className="bg-white">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
         <div className="sm:flex sm:items-baseline sm:justify-between">
-          <h2 className="text-2xl font-bold tracking-tight text-gray-900">
+          {/* <h2 className="text-2xl font-bold tracking-tight text-gray-900">
             Our Services
           </h2>
           <Link
@@ -18,7 +18,7 @@ export default function ServiceCategories() {
           >
             Browse all services
             <span aria-hidden="true"> &rarr;</span>
-          </Link>
+          </Link> */}
         </div>
 
         <div className="mt-6 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-6 lg:grid-cols-3 xl:gap-x-8">
@@ -45,7 +45,7 @@ export default function ServiceCategories() {
           ))}
         </div>
 
-        <div className="mt-6 sm:hidden">
+        {/* <div className="mt-6 sm:hidden">
           <Link
             href="/products"
             className="block text-sm font-semibold text-blue-600 hover:text-blue-500"
@@ -53,7 +53,7 @@ export default function ServiceCategories() {
             Browse all services
             <span aria-hidden="true"> &rarr;</span>
           </Link>
-        </div>
+        </div> */}
       </div>
     </div>
   )

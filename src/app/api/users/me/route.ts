@@ -1,13 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { getPayloadClient } from '@/get-payload'
+import { NextRequest, NextResponse } from 'next/server';
+import { getPayloadClient } from '@/get-payload';
 
 export async function GET(req: NextRequest) {
-  const token = req.cookies.get('payload-token')?.value
+  const token = req.cookies.get('payload-token')?.value;
   if (!token) {
-    return NextResponse.json({ user: null }, { status: 200 })
+    return NextResponse.json({ user: null }, { status: 200 });
   }
 
-  const payload = await getPayloadClient()
+  const payload = await getPayloadClient();
   try {
     const { docs: users } = await payload.find({
       collection: 'users',
@@ -15,9 +15,9 @@ export async function GET(req: NextRequest) {
       limit: 1,
       overrideAccess: true,
       user: { token },
-    })
-    const user = users[0] || null
-    // Only return relevant fields for the profile
+    });
+
+    const user = users[0] || null;
     const safeUser = user
       ? {
           id: user.id,
@@ -27,9 +27,10 @@ export async function GET(req: NextRequest) {
           address: user.address || null,
           pincode: user.pincode || null,
         }
-      : null
-    return NextResponse.json({ user: safeUser }, { status: 200 })
+      : null;
+
+    return NextResponse.json({ user: safeUser }, { status: 200 });
   } catch {
-    return NextResponse.json({ user: null }, { status: 200 })
+    return NextResponse.json({ user: null }, { status: 200 });
   }
-} 
+}

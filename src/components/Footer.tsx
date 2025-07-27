@@ -7,81 +7,76 @@ import Link from 'next/link'
 
 const Footer = () => {
   const pathname = usePathname()
-  const pathsToMinimize = [
-    '/verify-email',
-    '/sign-up',
-    '/sign-in',
-  ]
+  const pathsToMinimize = ['/verify-email', '/sign-up', '/sign-in']
+
+  if (pathsToMinimize.includes(pathname)) return null
 
   return (
-    <footer className='bg-white flex-grow-0'>
+    <footer className="bg-neutral-900 text-white">
       <MaxWidthWrapper>
-        <div className=''>
-          {pathsToMinimize.includes(pathname) ? null : (
-            <div className='pb-8 pt-16'>
-              <div className='flex justify-center'>
-                <Icons.logo className='h-12 w-auto' />
-              </div>
-            </div>
-          )}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-12">
 
-          {pathsToMinimize.includes(pathname) ? null : (
-            <div>
-              <div className='relative flex items-center px-6 py-6 sm:py-8 lg:mt-0'>
-                <div className='absolute inset-0 overflow-hidden rounded-lg'>
-                  <div
-                    aria-hidden='true'
-                    className='absolute bg-zinc-50 inset-0 bg-gradient-to-br bg-opacity-90'
-                  />
-                </div>
-
-                <div className='text-center relative mx-auto max-w-sm'>
-                  <h3 className='font-semibold text-gray-900'>
-                    Become a seller
-                  </h3>
-                  <p className='mt-2 text-sm text-muted-foreground'>
-                    If you&apos;d like to sell high-quality
-                    digital products, you can do so in
-                    minutes.{' '}
-                    <Link
-                      href='/sign-in?as=seller'
-                      className='whitespace-nowrap font-medium text-black hover:text-zinc-900'>
-                      Get started &rarr;
-                    </Link>
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className='py-10 md:flex md:items-center md:justify-between'>
-          <div className='text-center md:text-left'>
-            <p className='text-sm text-muted-foreground'>
-              &copy; {new Date().getFullYear()} All Rights
-              Reserved
+          {/* Brand Section */}
+          <div className="space-y-4">
+            <Link href="/">
+              <Icons.logo className="h-14 w-auto cursor-pointer" />
+            </Link>
+            <p className="text-sm text-gray-400">
+              Zonomo - Book verified local services at your convenience.
             </p>
           </div>
 
-          <div className='mt-4 flex items-center justify-center md:mt-0'>
-            <div className='flex space-x-8'>
-              <Link
-                href='#'
-                className='text-sm text-muted-foreground hover:text-gray-600'>
-                Terms
-              </Link>
-              <Link
-                href='#'
-                className='text-sm text-muted-foreground hover:text-gray-600'>
-                Privacy Policy
-              </Link>
-              <Link
-                href='#'
-                className='text-sm text-muted-foreground hover:text-gray-600'>
-                Cookie Policy
-              </Link>
-            </div>
+          {/* Help & Support */}
+          <div className="space-y-4">
+            <h4 className="text-sm font-semibold">Support</h4>
+            <ul className="space-y-2 text-sm text-gray-400">
+              <li>
+                <Link href="/help-center" className="hover:text-white">Help Center</Link>
+              </li>
+              <li>
+                <Link href="/how-it-works" className="hover:text-white">How it Works</Link>
+              </li>
+              <li>
+                <Link href="/service-areas" className="hover:text-white">Service Areas</Link>
+              </li>
+            </ul>
           </div>
+
+          {/* Partner With Us */}
+          <div className="space-y-4">
+            <h4 className="text-sm font-semibold">Become a Partner</h4>
+            <ul className="space-y-2 text-sm text-gray-400">
+              <li>
+                <Link href="/sign-in?as=seller" className="hover:text-white">
+                  Become a Service Provider
+                </Link>
+              </li>
+              <li>
+                <Link href="/business-inquiries" className="hover:text-white">Business Inquiries</Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Policies & Legal */}
+          <div className="space-y-4">
+            <h4 className="text-sm font-semibold">Legal</h4>
+            <ul className="space-y-2 text-sm text-gray-400">
+              <li>
+                <Link href="/terms" className="hover:text-white">Terms of Service</Link>
+              </li>
+              <li>
+                <Link href="/privacy-policy" className="hover:text-white">Privacy Policy</Link>
+              </li>
+              <li>
+                <Link href="/cookie-policy" className="hover:text-white">Cookie Policy</Link>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+
+        <div className="border-t border-gray-800 pt-6 pb-10 text-center text-sm text-gray-500">
+          &copy; {new Date().getFullYear()} Zonomo. All rights reserved.
         </div>
       </MaxWidthWrapper>
     </footer>

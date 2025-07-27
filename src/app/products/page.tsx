@@ -12,9 +12,7 @@ const parse = (param: Param) => {
   return typeof param === 'string' ? param : undefined
 }
 
-const ProductsPage = ({
-  searchParams,
-}: ProductsPageProps) => {
+const ProductsPage = ({ searchParams }: ProductsPageProps) => {
   const sort = parse(searchParams.sort)
   const category = parse(searchParams.category)
 
@@ -28,13 +26,10 @@ const ProductsPage = ({
         query={{
           category,
           limit: 40,
-          sort:
-            sort === 'desc' || sort === 'asc'
-              ? sort
-              : undefined,
+          sort: sort === 'desc' || sort === 'asc' ? sort : undefined,
         }}
         title={label ?? 'Browse all house services'}
-        subtitle='Discover a wide range of services for your home.'
+        subtitle="Discover a wide range of services for your home."
       />
     </MaxWidthWrapper>
   )

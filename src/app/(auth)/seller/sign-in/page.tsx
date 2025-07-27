@@ -12,16 +12,12 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowRight, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { useForm } from 'react-hook-form'
-
 import {
-  AuthCredentialsValidator,
-  TAuthCredentialsValidator,
   SignInValidator,
   TSignInValidator,
 } from '@/lib/validators/account-credentials-validator'
 import { trpc } from '@/trpc/client'
 import { toast } from 'sonner'
-import { ZodError } from 'zod'
 import { useRouter } from 'next/navigation'
 
 const Page = () => {
@@ -45,14 +41,13 @@ const Page = () => {
       onError: (err) => {
         if (err.data?.code === 'UNAUTHORIZED') {
           toast.error('Invalid email or password.')
+        } else {
+          toast.error('An unexpected error occurred.')
         }
       },
     })
 
-  const onSubmit = ({
-    email,
-    password,
-  }: TSignInValidator) => {
+  const onSubmit = ({ email, password }: TSignInValidator) => {
     signIn({ email, password })
   }
 
@@ -84,8 +79,7 @@ const Page = () => {
                 <Input
                   {...register('email')}
                   className={cn({
-                    'focus-visible:ring-emerald-500 border-emerald-200':
-                      !errors.email,
+                    'focus-visible:ring-emerald-500 border-emerald-200': !errors.email,
                     'focus-visible:ring-red-500': errors.email,
                   })}
                   placeholder='you@example.com'
@@ -103,8 +97,7 @@ const Page = () => {
                   {...register('password')}
                   type='password'
                   className={cn({
-                    'focus-visible:ring-emerald-500 border-emerald-200':
-                      !errors.password,
+                    'focus-visible:ring-emerald-500 border-emerald-200': !errors.password,
                     'focus-visible:ring-red-500': errors.password,
                   })}
                   placeholder='Password'
@@ -140,4 +133,4 @@ const Page = () => {
   )
 }
 
-export default Page 
+export default Page
