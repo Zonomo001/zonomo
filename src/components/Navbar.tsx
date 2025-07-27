@@ -29,32 +29,31 @@ const NavbarClient = () => {
 
   const user: User | null = userProfile
     ? {
-        ...userProfile,
-        role: "user",
-        updatedAt: "",
-        createdAt: "",
-        password: null,
-      }
+      ...userProfile,
+      role: "user",
+      updatedAt: "",
+      createdAt: "",
+      password: null,
+    }
     : null;
 
-  // 👉 Pathname based Active Tab using your if-else structure
   useEffect(() => {
     if (pathname === "/") setActiveTab("Home");
     else if (pathname.includes("/bookings")) setActiveTab("Bookings");
     else if (pathname.includes("/profile")) setActiveTab("Profile");
     else if (pathname.includes("/settings")) setActiveTab("Settings");
-    else setActiveTab(""); // No match
+    else setActiveTab("");
   }, [pathname]);
 
   return (
-    <div className="relative z-50 w-full zonomo-gradient text-white sticky top-0">
-      {/* Top Navbar */}
-      <div className="flex items-center justify-between h-16 px-4 md:px-6">
+    <div className="relative z-50 w-full h-45 zonomo-gradient text-white sticky top-0 rounded-b-2xl shadow-md flex flex-col justify-between">
+      {/* Top Row: Logo + Icons */}
+      <div className="flex items-center justify-between h-12 px-4 md:px-6">
         <Link href="/" className="flex items-center">
-          <Icons.logo className="h-10 w-auto" />
+          <Icons.logo className="h-8 w-auto" />
         </Link>
 
-        {/* Mobile Menu */}
+        {/* Mobile Drawer */}
         <div className="flex md:hidden items-center space-x-4">
           <Link href="/cart">
             <ShoppingCart className="w-6 h-6" />
@@ -74,9 +73,8 @@ const NavbarClient = () => {
                     key={tab.name}
                     href={tab.href}
                     onClick={() => setDrawerOpen(false)}
-                    className={`block py-2 text-sm ${
-                      activeTab === tab.name ? "font-semibold text-white" : "text-white/80"
-                    }`}
+                    className={`block py-2 text-sm ${activeTab === tab.name ? "font-semibold text-white" : "text-white/80"
+                      }`}
                   >
                     {tab.name}
                   </Link>
@@ -103,7 +101,7 @@ const NavbarClient = () => {
           </Sheet>
         </div>
 
-        {/* Desktop Actions */}
+        {/* Desktop Right Actions */}
         <div className="hidden md:flex items-center space-x-4">
           <Cart />
           <Bell className="w-6 h-6 cursor-pointer" />
@@ -129,36 +127,34 @@ const NavbarClient = () => {
           )}
         </div>
       </div>
-      {/* Centered Username + Location */}
-        <div className="flex flex-col items-center mt-2 text-white">
-          <h2 className="text-xs font-medium">
-            Hi, {user?.email?.split("@")[0]?.toUpperCase() || "USERNAME"} 👋
-          </h2>
-          {/* Location Display */}
-      <div className="flex justify-center py-2 text-xs text-white/80">
-        <LocationDisplay />
-      </div>
-        </div>
 
-      {/* Search Bar */}
-      <div className="py-2 px-4 md:px-6">
-        <div className="relative max-w-xl mx-auto">
+      {/* Username & Location */}
+      <div className="flex flex-col items-center text-center">
+        <h2 className="text-xs font-medium leading-none">
+          Hi, {user?.email?.split("@")[0]?.toUpperCase() || "USERNAME"} 👋
+        </h2>
+        <div className="text-[10px] text-white/80">
+          <LocationDisplay />
+        </div>
+      </div>
+
+      <div className="flex flex-col items-center gap-2 px-4 md:px-6 pb-2">
+        {/* SearchBar */}
+        <div className="relative w-full max-w-xl">
           <SearchBar />
         </div>
-      </div>
 
-      {/* Tabs */}
-        <div className="max-w-3xl mx-auto">
-          <div className="flex justify-center space-x-1 bg-white/10 rounded-xl p-0.5">
+        {/* Tabs aligned to SearchBar width */}
+        <div className="w-full max-w-xl">
+          <div className="flex justify-center space-x-2 bg-white/10 backdrop-blur-sm rounded-xl p-0.5">
             {navigationTabs.map((tab) => (
               <Link
                 key={tab.name}
                 href={tab.href}
-                className={`flex-1 text-center py-1.5 px-2 rounded-md text-[11px] font-medium transition-all ${
-                  activeTab === tab.name
+                className={`flex-1 text-center py-1.5 rounded-md text-[12px] font-medium transition-all ${activeTab === tab.name
                     ? "bg-white/20 text-white"
                     : "text-white/70 hover:text-white"
-                }`}
+                  }`}
                 onClick={() => setActiveTab(tab.name)}
               >
                 {tab.name}
@@ -166,16 +162,13 @@ const NavbarClient = () => {
             ))}
           </div>
         </div>
-          <div className="max-w-3xl mx-auto">
-          
-        </div>
-
-     
+      </div>
     </div>
   );
 };
 
 export default NavbarClient;
+
 
 
 // "use client";

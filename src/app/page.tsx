@@ -159,7 +159,7 @@ export default function ZonomoHomeLayout({ heroBanners = [] }: ZonomoHomeLayoutP
       price: "Book now",
       bgColor: "bg-gray-900",
       textColor: "text-white",
-      image: "/nav/ui-kits/purple.jpg",
+      image: "/figma-images/deepclean.jpg",
       href: "/products?category=ac-service",
     },
     {
@@ -168,7 +168,7 @@ export default function ZonomoHomeLayout({ heroBanners = [] }: ZonomoHomeLayoutP
       price: "Book now",
       bgColor: "bg-green-700",
       textColor: "text-white",
-      image: "/nav/ui-kits/blue.jpg",
+      image: "/figma-images/kitchen.jpg",
       href: "/products?category=kitchen-cleaning",
     },
     {
@@ -177,7 +177,7 @@ export default function ZonomoHomeLayout({ heroBanners = [] }: ZonomoHomeLayoutP
       price: "Book now",
       bgColor: "bg-amber-900",
       textColor: "text-white",
-      image: "/nav/ui-kits/mixed.jpg",
+      image: "/figma-images/home_decor.jpeg",
       href: "/products?category=wall-panels",
     },
   ];
@@ -186,25 +186,25 @@ export default function ZonomoHomeLayout({ heroBanners = [] }: ZonomoHomeLayoutP
     {
       name: "Beauty At Home",
       price: "From ₹499",
-      image: "/nav/ui-kits/purple.jpg",
+      image: "/figma-images/beauty.jpg",
       href: "/products?category=beauty",
     },
     {
       name: "Appliance Service & Repair",
       price: "From ₹499",
-      image: "/nav/ui-kits/blue.jpg",
+      image: "/figma-images/appliance.jpg",
       href: "/products?category=appliance",
     },
     {
       name: "Home Projects & Decor",
       price: "From ₹499",
-      image: "/nav/ui-kits/mixed.jpg",
+      image: "/figma-images/home_decor.jpeg",
       href: "/products?category=home-decor",
     },
     {
       name: "Kitchen Service",
       price: "From ₹499",
-      image: "/nav/icons/picks.jpg",
+      image: "/figma-images/kitchen.jpg",
       href: "/products?category=kitchen",
     },
   ];
@@ -255,32 +255,43 @@ export default function ZonomoHomeLayout({ heroBanners = [] }: ZonomoHomeLayoutP
         </div>
       )}
 
-      {/* Top Picks */}
-      <div className="px-4 mb-8">
-        <h3 className="text-xl font-medium mb-6">Top Picks For You</h3>
-        <div className="flex gap-4 overflow-x-auto pb-4">
-          {topPicksServices.map((service, index) => (
-            <Link key={index} href={service.href}>
-              <div className={`relative rounded-3xl overflow-hidden p-6 min-w-[280px] h-40 ${service.bgColor} flex items-center justify-between border border-white/20 hover:border-white/40 transition-all duration-300`}>
-                <div className="flex-1">
-                  <h4 className={`font-bold text-lg mb-2 ${service.textColor}`}>{service.title}</h4>
-                  {service.subtitle && <p className={`text-sm mb-3 ${service.textColor} opacity-80`}>{service.subtitle}</p>}
-                  <button className="px-4 py-2 rounded-lg text-sm font-medium bg-white/10 text-white hover:bg-white/20 transition">{service.price}</button>
-                </div>
-                <div className="w-20 h-20 relative ml-4">
-                  <Image src={service.image} alt={service.title} fill className="object-cover rounded-2xl" />
-                </div>
-              </div>
-            </Link>
-          ))}
+ {/* Top Picks */}
+<div className="px-4 mb-8">
+  <h3 className="text-xl font-medium mb-6">Top Picks For You</h3>
+  <div className="flex gap-4 overflow-x-auto pb-4">
+    {topPicksServices.map((service, index) => (
+      <Link key={index} href={service.href}>
+        <div
+          className={`relative rounded-3xl overflow-hidden p-4 md:p-6 min-w-[240px] md:min-w-[280px] h-48 md:h-40 ${service.bgColor} flex items-center justify-between border border-white/20 hover:border-white/40 transition-all duration-300`}
+        >
+          <div className="flex-1">
+            <h4 className={`font-bold text-base md:text-lg mb-1 md:mb-2 ${service.textColor}`}>
+              {service.title}
+            </h4>
+            {service.subtitle && (
+              <p className={`text-xs md:text-sm mb-2 md:mb-3 ${service.textColor} opacity-80`}>
+                {service.subtitle}
+              </p>
+            )}
+            <button className="px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-medium bg-white/10 text-white hover:bg-white/20 transition">
+              {service.price}
+            </button>
+          </div>
+          <div className="w-16 h-16 md:w-20 md:h-20 relative ml-2 md:ml-4">
+            <Image src={service.image} alt={service.title} fill className="object-cover rounded-2xl" />
+          </div>
         </div>
-      </div>
+      </Link>
+    ))}
+  </div>
+</div>
+
 
       {/* Categories */}
       <div className="px-4 mb-8">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-xl font-medium">All Categories</h3>
-          <Link href="/products" className="text-sm font-bold text-blue-400">SEE ALL</Link>
+          <Link href="/categories" className="text-sm font-bold text-blue-400">SEE ALL</Link>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {serviceCategories.map((category, index) => (
