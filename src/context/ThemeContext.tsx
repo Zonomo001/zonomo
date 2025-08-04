@@ -1,30 +1,61 @@
-'use client';
+"use client";
 
-import { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect } from "react";
 
-type ThemeContextType = {
+interface ThemeContextType {
   isDarkMode: boolean;
-  toggleTheme: () => void;
-};
+  toggleDarkMode: () => void;
+}
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const [isDarkMode, setIsDarkMode] = useState(true); // Default to dark mode
+  const [isMounted, setIsMounted] = useState(false);
 
-  const toggleTheme = () => setIsDarkMode((prev) => !prev);
+  useEffect(() => {
+    setIsMounted(true);
+    // Check localStorage for saved theme preference
+    const savedTheme = localStorage.getItem("darkMode");
+    if (savedTheme !== null) {
+      setIsDarkMode(JSON.parse(savedTheme));
+    }
+  }, []);
+
+  const toggleDarkMode = () => {
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    localStorage.setItem("darkMode", JSON.stringify(newMode));
+  };
 
   return (
-    <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
-      {children}
+    <ThemeContext.Provider value={{ isDarkMode, toggleDarkMode }}>
+      <div className={isMounted ? (isDarkMode ? "dark" : "light") : "dark"}>
+        <div
+          className="min-h-screen"
+          style={{
+            backgroundColor: isMounted
+              ? isDarkMode
+                ? "#1a1a1a"
+                : "#ffffff"
+              : "#1a1a1a",
+          }}
+        >
+          {children}
+        </div>
+      </div>
     </ThemeContext.Provider>
   );
-};
+}
 
-export const useTheme = () => {
+export function useTheme() {
   const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+  if (context === undefined) {
+    // Return default values instead of throwing error during SSR/hydration
+    return {
+      isDarkMode: true,
+      toggleDarkMode: () => {},
+    };
   }
   return context;
-};
+}
