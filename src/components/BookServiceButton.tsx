@@ -5,23 +5,24 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Product, User } from '@/payload-types'
-import { format, addDays, nextDay, parseISO, setHours, setMinutes, isBefore, addHours, isValid, isToday, isAfter } from 'date-fns'
-import { trpc } from '@/trpc/client'
+import { format, setHours, setMinutes, isBefore, addHours, isToday } from 'date-fns'
 import { toast } from 'sonner'
 import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { CalendarIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { TRPCError } from '@trpc/server'
 import TimeFrameSelector, { TIME_FRAMES, TimeFrame } from './TimeFrameSelector'
-import { useCart } from '@/hooks/use-cart'
-import { useUserProfile } from '@/hooks/use-auth'
+import { db } from '@/lib/firebase'
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
+// import { useUserProfile } from '@/hooks/use-auth'
 
 interface BookServiceButtonProps {
-  product: Product;
-  user: User | null;
-  availability: Product['availability'];
+  product: Product
+  user: User | null
+  availability: Product['availability']
 }
+
+// const { profile: userProfile } = useUserProfile()
 
 const BookServiceButton = ({
   product,
@@ -36,146 +37,69 @@ const BookServiceButton = ({
   const [name, setName] = useState('')
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
 
-  const { addItem } = useCart()
-  const { profile: userProfile } = useUserProfile()
-
-  const { mutate: createBooking, isLoading: isCreatingBooking } = trpc.booking.createBooking.useMutation({
-    onSuccess: () => {
-      toast.success('Booking request sent successfully!')
-      setShowForm(false)
-      setSelectedDate(undefined)
-      setSelectedTime(null)
-      setName('')
-      setIsLoading(false)
-    },
-    onError: (err: TRPCError) => {
-      toast.error('Failed to send booking request.', {
-        description: err.message,
-      })
-      setIsLoading(false)
-    },
-  })
-
-  const WEEK_DAYS = [
-    'sunday',
-    'monday',
-    'tuesday',
-    'wednesday',
-    'thursday',
-    'friday',
-    'saturday',
-  ] as const;
-
-  // Helper to convert day name to date-fns day index
-  const getDayIndex = (dayName: string) => {
-    const index = WEEK_DAYS.indexOf(dayName.toLowerCase() as typeof WEEK_DAYS[number]);
-    return index !== -1 ? index : -1;
-  };
-
-  // Generate upcoming dates based on available days
-  const getAvailableCalendarDates = () => {
-    const dates: Date[] = []
-    const today = new Date()
-    today.setHours(0, 0, 0, 0) // Normalize to start of day
-
-    const availableDayNames = Array.from(new Set(productAvailability?.map(a => a.day))) || []
-
-    // Look for upcoming dates for the next 12 months
-    for (let i = 0; i < 365; i++) { // Check next 365 days for available days
-      const currentDay = addDays(today, i)
-      const dayName = format(currentDay, 'eeee').toLowerCase()
-
-      if (availableDayNames.includes(dayName as Product['availability'][number]['day'])) {
-        dates.push(currentDay)
-      }
-    }
-    return dates
-  }
-
-  const availableCalendarDates = getAvailableCalendarDates()
+  const WEEK_DAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const
 
   const getTimeSlotsForDate = (date: Date) => {
-    const dayOfWeek = format(date, 'eeee').toLowerCase();
-    
-    if (!WEEK_DAYS.includes(dayOfWeek as typeof WEEK_DAYS[number])) {
-      return [];
-    }
-
-    const typedDayOfWeek = dayOfWeek as Product['availability'][number]['day'];
-    const dayAvailability = productAvailability?.find((avail) => avail.day === typedDayOfWeek)
-
-    if (!dayAvailability || dayAvailability.timeSlots.length === 0) {
-      return []
-    }
+    const dayOfWeek = format(date, 'eeee').toLowerCase()
+    const typedDay = dayOfWeek as typeof WEEK_DAYS[number]
+    const availability = productAvailability?.find(avail => avail.day === typedDay)
+    if (!availability) return []
 
     const slots: string[] = []
-    dayAvailability.timeSlots.forEach(range => {
-      const [startHourStr, startMinuteStr] = range.startTime.split(':').map(s => s.padStart(2, '0'))
-      const [endHourStr, endMinuteStr] = range.endTime.split(':').map(s => s.padStart(2, '0'))
+    availability.timeSlots.forEach(range => {
+      const [sh, sm] = range.startTime.split(':').map(Number)
+      const [eh, em] = range.endTime.split(':').map(Number)
 
-      let current = setMinutes(setHours(date, parseInt(startHourStr || '00')), parseInt(startMinuteStr || '00'))
-      const end = setMinutes(setHours(date, parseInt(endHourStr || '00')), parseInt(endMinuteStr || '00'))
-
-      const durationInHours = product.duration || 1;
+      let current = setMinutes(setHours(date, sh), sm)
+      const end = setMinutes(setHours(date, eh), em)
+      const duration = product.duration || 1
 
       while (isBefore(current, end)) {
-        const potentialNext = addHours(current, durationInHours);
-        const actualSlotEnd = isAfter(potentialNext, end) ? end : potentialNext;
-
-        if (isBefore(current, actualSlotEnd)) { // Ensure the slot has a positive duration
-          slots.push(`${format(current, 'hh:mm a')} - ${format(actualSlotEnd, 'hh:mm a')}`)
+        const next = addHours(current, duration)
+        if (isBefore(current, next)) {
+          slots.push(`${format(current, 'hh:mm a')} - ${format(next, 'hh:mm a')}`)
         }
-        current = actualSlotEnd // Advance current to the end of the slot just added
+        current = next
       }
     })
-    console.log(`Generated slots for ${format(date, 'yyyy-MM-dd')}:`, slots);
+
     return slots
   }
 
   const getAvailableTimeFrames = (date: Date) => {
     const slots = getTimeSlotsForDate(date)
-    const timeFrames = {
-      MORNING: 0,
-      AFTERNOON: 0,
-      EVENING: 0,
-    }
+    const counts = { MORNING: 0, AFTERNOON: 0, EVENING: 0 }
 
     slots.forEach(slot => {
       const [startTime] = slot.split(' - ')
       const hour = parseInt(startTime.split(':')[0])
-      const isPM = startTime.toLowerCase().includes('pm')
-      const hour24 = isPM ? (hour === 12 ? 12 : hour + 12) : (hour === 12 ? 0 : hour)
+      const isPM = startTime.includes('PM')
+      const hour24 = isPM && hour !== 12 ? hour + 12 : (isPM ? 12 : hour === 12 ? 0 : hour)
 
       for (const frameKey in TIME_FRAMES) {
-        const timeFrame = frameKey as TimeFrame
-        const { start, end } = TIME_FRAMES[timeFrame]
-        const [startHour] = start.split(':')
-        const [endHour] = end.split(':')
-
-        if (hour24 >= parseInt(startHour) && hour24 < parseInt(endHour)) {
-          timeFrames[timeFrame]++
-          break // Assign to the first matching time frame
+        const tf = frameKey as TimeFrame
+        const { start, end } = TIME_FRAMES[tf]
+        if (hour24 >= +start.split(':')[0] && hour24 < +end.split(':')[0]) {
+          counts[tf]++
         }
       }
     })
 
-    console.log(`Available time frames for ${format(date, 'yyyy-MM-dd')}:`, timeFrames);
-    return timeFrames
+    return counts
   }
 
   const getFilteredTimeSlots = (date: Date, timeFrame: TimeFrame) => {
     const slots = getTimeSlotsForDate(date)
     const { start, end } = TIME_FRAMES[timeFrame]
-    const [startHour] = start.split(':')
-    const [endHour] = end.split(':')
+    const sh = +start.split(':')[0]
+    const eh = +end.split(':')[0]
 
     return slots.filter(slot => {
       const [startTime] = slot.split(' - ')
       const hour = parseInt(startTime.split(':')[0])
-      const isPM = startTime.toLowerCase().includes('pm')
-      const hour24 = isPM ? (hour === 12 ? 12 : hour + 12) : (hour === 12 ? 0 : hour)
-
-      return hour24 >= parseInt(startHour) && hour24 < parseInt(endHour)
+      const isPM = startTime.includes('PM')
+      const hour24 = isPM && hour !== 12 ? hour + 12 : (isPM ? 12 : hour === 12 ? 0 : hour)
+      return hour24 >= sh && hour24 < eh
     })
   }
 
@@ -183,44 +107,59 @@ const BookServiceButton = ({
     e.preventDefault()
     setIsLoading(true)
 
-    if (!user) {
-      toast.error('You must be logged in to book a service.')
+    if (!user || !selectedDate || !selectedTime || !selectedTimeFrame || !name) {
+      toast.error('Please fill all fields.')
       setIsLoading(false)
       return
     }
 
-    if (!selectedDate || !selectedTime || !selectedTimeFrame) {
-      toast.error('Please select a date, time frame, and time slot.')
+    const userId = user.id
+    const providerId = typeof product.user === 'string' ? product.user : product.user?.id
+    const productId = product.id
+
+    if (!userId || !providerId || !productId) {
+      toast.error('Missing user, provider or product ID.')
       setIsLoading(false)
       return
     }
 
-    if (!name) {
-      toast.error('Please enter your name.')
+    try {
+      const chatRoomId = `chat_${userId}_${providerId}_${productId}`
+
+      await setDoc(doc(db, 'chatRooms', chatRoomId), {
+  participants: [userId, providerId],
+  productId,
+  bookingDate: selectedDate.toISOString(),
+  bookingTime: selectedTime,
+  customerName: name,
+  customerEmail: user.email,
+  createdAt: serverTimestamp(),
+  productName: product.name,
+  // providerName: providerId.name || 'Provider',
+  chatRoomName: `${product.name} with ${name || 'Provider'}`,
+
+  bargain: {
+    originalPrice: product.price,
+    userOffer: product.price,
+    providerOffer: product.price,
+    confirmations: [],
+  },
+})
+
+      await setDoc(doc(db, 'chatRooms', chatRoomId, 'messages', 'admin-message'), {
+        sender: 'admin',
+        message: `Booking Request\nService: ${product.name}\nDate: ${format(selectedDate, 'PPP')}\nTime Frame: ${TIME_FRAMES[selectedTimeFrame].label}\nTime: ${selectedTime}\nCustomer Name: ${name}\nCustomer Email: ${user.email}`,
+        createdAt: serverTimestamp(),
+      })
+
+      toast.success('Chat room created!')
+      window.location.href = `/chat`
+    } catch (err) {
+      console.error(err)
+      toast.error('Failed to create chat room. Please try again.')
+    } finally {
       setIsLoading(false)
-      return
     }
-
-    addItem(product, format(selectedDate, 'yyyy-MM-dd'), selectedTime, selectedTimeFrame)
-    toast.success('Service added to cart!')
-    setShowForm(false)
-    setSelectedDate(undefined)
-    setSelectedTimeFrame(null)
-    setSelectedTime(null)
-    setName('')
-    setIsLoading(false)
-  }
-
-  if (!showForm) {
-    return (
-      <Button
-        onClick={() => setShowForm(true)}
-        className='w-full'
-        size='lg'
-      >
-        Book Service
-      </Button>
-    )
   }
 
   return (
@@ -336,7 +275,8 @@ const BookServiceButton = ({
               <p className='text-sm text-muted-foreground'>
                 <strong>Email:</strong> {user?.email}
               </p>
-              {userProfile && (
+
+              {/* {userProfile && (
                 <>
                   <p className='text-sm text-muted-foreground'>
                     <strong>Address:</strong> {userProfile.address}
@@ -345,16 +285,18 @@ const BookServiceButton = ({
                     <strong>Pincode:</strong> {userProfile.pincode}
                   </p>
                 </>
-              )}
+              )} */}
+            
             </div>
+            
 
             <div className='flex gap-2'>
               <Button
                 type='submit'
                 className='flex-1'
-                disabled={isLoading || isCreatingBooking}
+                disabled={isLoading}
               >
-                {isLoading || isCreatingBooking ? 'Booking...' : 'Start Chat With Seller'}
+                {isLoading ? 'Booking...' : 'Start Chat With Seller'}
               </Button>
               <Button
                 type='button'

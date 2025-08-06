@@ -5,7 +5,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
 import './globals.css'
-import Footer from '@/components/Footer'
+
 import PWAInstallPrompt from '@/components/PWAInstallPrompt'
 import BottomNav from '@/components/BottomNav'
 import { ThemeProvider } from '@/context/ThemeContext'
@@ -43,7 +43,6 @@ export default function RootLayout({
               <div className='flex-grow flex-1'>
                 {children}
               </div>
-              <Footer />
             </Providers>
           </main>
 

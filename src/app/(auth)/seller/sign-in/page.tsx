@@ -46,7 +46,7 @@ const Page = () => {
       onSuccess: async () => {
         toast.success('Signed in successfully as seller')
         router.refresh()
-        router.push('/sell')
+        router.push('/nav')
       },
       onError: (err) => {
         if (err.data?.code === 'UNAUTHORIZED') {
