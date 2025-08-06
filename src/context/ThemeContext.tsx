@@ -10,12 +10,12 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [isDarkMode, setIsDarkMode] = useState(true); 
+  const [isDarkMode, setIsDarkMode] = useState(true); // Default to dark mode
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
-   
+    // Check localStorage for saved theme preference
     const savedTheme = localStorage.getItem("darkMode");
     if (savedTheme !== null) {
       setIsDarkMode(JSON.parse(savedTheme));
@@ -51,7 +51,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 export function useTheme() {
   const context = useContext(ThemeContext);
   if (context === undefined) {
-    
+    // Return default values instead of throwing error during SSR/hydration
     return {
       isDarkMode: true,
       toggleDarkMode: () => {},

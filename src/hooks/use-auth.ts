@@ -5,6 +5,7 @@ import { useEffect } from 'react'
 import { create } from 'zustand'
 
 export interface UserProfile {
+  avatarUrl: string
   id: string
   name: string
   mobile: string
@@ -45,6 +46,7 @@ export const useUserStore = create<UserStore>((set) => ({
           address: data.user.address || '',
           pincode: data.user.pincode || '',
           email: data.user.email || '',
+          avatarUrl: ''
         }, loading: false })
       } else {
         set({ profile: null, loading: false })
