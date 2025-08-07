@@ -1,5 +1,5 @@
 "use client";
-
+export const dynamic = 'force-dynamic'
 import { Icons } from "@/components/Icons";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
