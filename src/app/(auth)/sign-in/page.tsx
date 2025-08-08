@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Poppins } from "next/font/google";
@@ -21,7 +21,7 @@ const poppins = Poppins({
   weight: ["100", "200", "600"],
 });
 
-const Page = () => {
+const SignInForm = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const originParam = searchParams.get("origin") || "";
@@ -40,11 +40,9 @@ const Page = () => {
     onSuccess: async () => {
       toast.success("Signed in successfully");
       
-      
       useUserStore.getState().refetch();
-      
-     
       router.refresh();
+      
       if (originParam) {
         const target = originParam.startsWith("/") ? originParam : `/${originParam}`;
         router.push(target);
@@ -70,6 +68,128 @@ const Page = () => {
     setShowPassword(prev => !prev);
   };
 
+  return (
+    <div className="w-full lg:w-auto lg:flex-shrink-0 px-4 lg:px-0">
+      <div className="bg-black/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 border border-white/10 w-full lg:w-[450px] max-w-md mx-auto lg:mx-0">
+        <div className="text-center mb-6 sm:mb-8">
+          <h2 className="text-xl sm:text-2xl text-white mb-2">
+            Sign In to Your Account
+          </h2>
+        </div>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div className="space-y-4">
+            {/* Email Input */}
+            <div>
+              <div className="relative">
+                <Input
+                  {...register("email")}
+                  type="email"
+                  placeholder="Email Address"
+                  className={cn(
+                    "w-full h-12 bg-white/10 border-purple-400/30 text-white placeholder:text-purple-200 rounded-lg pl-12 pr-4 focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all",
+                    {
+                      "border-red-400 focus:ring-red-400": errors.email,
+                    }
+                  )}
+                />
+                <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                  <div className="w-5 h-5 bg-purple-400/50 rounded flex items-center justify-center">
+                    <span className="text-xs text-white">@</span>
+                  </div>
+                </div>
+              </div>
+              {errors?.email && (
+                <p className="text-sm text-red-400 mt-1">
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <div className="relative">
+                <Input
+                  {...register("password")}
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  className={cn(
+                    "w-full h-12 bg-white/10 border-purple-400/30 text-white placeholder:text-purple-200 rounded-lg pl-12 pr-12 focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all",
+                    {
+                      "border-red-400 focus:ring-red-400": errors.password,
+                    }
+                  )}
+                />
+                <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                  <div className="w-5 h-5 bg-purple-400/50 rounded flex items-center justify-center">
+                    <span className="text-xs text-white">🔒</span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-purple-300 hover:text-white transition-colors"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? "👁" : "👁"}
+                </button>
+              </div>
+              {errors?.password && (
+                <p className="text-sm text-red-400 mt-1">
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className="text-right">
+            <Link
+              href="/forgot-password"
+              className="text-sm text-purple-300 hover:text-white transition-colors"
+            >
+              Forgot Password?
+            </Link>
+          </div>
+
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className="w-full h-12 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+          >
+            {isLoading && (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            )}
+            Sign In
+          </Button>
+        </form>
+
+        <div className="mt-6 text-center">
+          <span className="text-purple-300 text-sm">
+            Don't have an account?{" "}
+          </span>
+          <Link
+            href="/sign-up"
+            className="text-white hover:text-purple-200 font-semibold text-sm transition-colors"
+          >
+            Sign up here
+          </Link>
+        </div>
+
+        <div className="mt-4">
+          <Button
+            onClick={() => router.push("/seller/sign-in")}
+            variant="outline"
+            className="w-full h-12 bg-transparent border-purple-400/30 text-purple-300 hover:bg-white/10 hover:text-white hover:border-purple-300 transition-all"
+            disabled={isLoading}
+          >
+            Continue as seller
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Page = () => {
   return (
     <div
       className={cn(
@@ -107,124 +227,25 @@ const Page = () => {
               </div>
             </div>
 
-            {/* Right side - Login form */}
-            <div className="w-full lg:w-auto lg:flex-shrink-0 px-4 lg:px-0">
-              <div className="bg-black/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 border border-white/10 w-full lg:w-[450px] max-w-md mx-auto lg:mx-0">
-                <div className="text-center mb-6 sm:mb-8">
-                  <h2 className="text-xl sm:text-2xl text-white mb-2">
-                    Sign In to Your Account
-                  </h2>
-                </div>
-
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                  <div className="space-y-4">
-                    {/* Email Input */}
-                    <div>
-                      <div className="relative">
-                        <Input
-                          {...register("email")}
-                          type="email"
-                          placeholder="Email Address"
-                          className={cn(
-                            "w-full h-12 bg-white/10 border-purple-400/30 text-white placeholder:text-purple-200 rounded-lg pl-12 pr-4 focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all",
-                            {
-                              "border-red-400 focus:ring-red-400": errors.email,
-                            }
-                          )}
-                        />
-                        <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                          <div className="w-5 h-5 bg-purple-400/50 rounded flex items-center justify-center">
-                            <span className="text-xs text-white">@</span>
-                          </div>
-                        </div>
+            {/* Right side - Login form wrapped in Suspense */}
+            <Suspense 
+              fallback={
+                <div className="w-full lg:w-auto lg:flex-shrink-0 px-4 lg:px-0">
+                  <div className="bg-black/30 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 border border-white/10 w-full lg:w-[450px] max-w-md mx-auto lg:mx-0">
+                    <div className="animate-pulse">
+                      <div className="h-8 bg-white/20 rounded mb-6"></div>
+                      <div className="space-y-4">
+                        <div className="h-12 bg-white/20 rounded"></div>
+                        <div className="h-12 bg-white/20 rounded"></div>
+                        <div className="h-12 bg-white/20 rounded"></div>
                       </div>
-                      {errors?.email && (
-                        <p className="text-sm text-red-400 mt-1">
-                          {errors.email.message}
-                        </p>
-                      )}
-                    </div>
-
-                    <div>
-                      <div className="relative">
-                        <Input
-                          {...register("password")}
-                          type={showPassword ? "text" : "password"}
-                          placeholder="Password"
-                          className={cn(
-                            "w-full h-12 bg-white/10 border-purple-400/30 text-white placeholder:text-purple-200 rounded-lg pl-12 pr-12 focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all",
-                            {
-                              "border-red-400 focus:ring-red-400": errors.password,
-                            }
-                          )}
-                        />
-                        <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                          <div className="w-5 h-5 bg-purple-400/50 rounded flex items-center justify-center">
-                            <span className="text-xs text-white">🔒</span>
-                          </div>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={togglePasswordVisibility}
-                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-purple-300 hover:text-white transition-colors"
-                          aria-label={showPassword ? "Hide password" : "Show password"}
-                        >
-                          {showPassword ? "👁" : "👁"}
-                        </button>
-                      </div>
-                      {errors?.password && (
-                        <p className="text-sm text-red-400 mt-1">
-                          {errors.password.message}
-                        </p>
-                      )}
                     </div>
                   </div>
-
-                  <div className="text-right">
-                    <Link
-                      href="/forgot-password"
-                      className="text-sm text-purple-300 hover:text-white transition-colors"
-                    >
-                      Forgot Password?
-                    </Link>
-                  </div>
-
-                  <Button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full h-12 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-                  >
-                    {isLoading && (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    )}
-                    Sign In
-                  </Button>
-                </form>
-
-                <div className="mt-6 text-center">
-                  <span className="text-purple-300 text-sm">
-                    Don't have an account?{" "}
-                  </span>
-                  <Link
-                    href="/sign-up"
-                    className="text-white hover:text-purple-200 font-semibold text-sm transition-colors"
-                  >
-                    Sign up here
-                  </Link>
                 </div>
-
-                <div className="mt-4">
-                  <Button
-                    onClick={() => router.push("/seller/sign-in")}
-                    variant="outline"
-                    className="w-full h-12 bg-transparent border-purple-400/30 text-purple-300 hover:bg-white/10 hover:text-white hover:border-purple-300 transition-all"
-                    disabled={isLoading}
-                  >
-                    Continue as seller
-                  </Button>
-                </div>
-              </div>
-            </div>
+              }
+            >
+              <SignInForm />
+            </Suspense>
           </div>
         </div>
       </div>
